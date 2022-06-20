@@ -1,25 +1,15 @@
-import 'package:blocevents/core/application/bloc/global/event_bloc.dart';
-import 'package:blocevents/modules/tasks/ui/pages/task_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
-void main() => runApp(const MyApp());
+import 'package:blocevents/app_module.dart';
+import 'package:blocevents/app_widget.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+void main() {
+  Modular.setInitialRoute('/');
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider<EventBloc>(
-            create: (_) => EventBloc(),
-          ),
-        ],
-        child: const TasksListPage(),
-      ),
-    );
-  }
+  runApp(ModularApp(
+    module: AppModule(),
+    child: const AppWidget(),
+  ));
+  // const MyApp()
 }

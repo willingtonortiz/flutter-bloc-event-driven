@@ -1,22 +1,21 @@
 import 'dart:math';
-
-import 'package:blocevents/modules/tasks/application/bloc/task_list_events.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:blocevents/core/application/bloc/global/event_bloc.dart';
-
+import 'package:blocevents/core/application/bloc/bloc.dart';
+import 'package:blocevents/modules/auth/application/bloc/bloc.dart';
+import 'package:blocevents/modules/tasks/application/bloc/bloc.dart';
 import 'package:blocevents/modules/tasks/domain/models/task.dart';
-import 'package:blocevents/modules/tasks/application/bloc/task_list_actions.dart';
-import 'package:blocevents/modules/tasks/application/bloc/task_list_state.dart';
 
 class TaskListBloc extends Bloc<TaskListAction, TaskListState> {
   TaskListBloc({
     required this.eventBloc,
+    required this.authBloc,
   }) : super(const TaskListState()) {
     on<LoadTaskList>(loadTaskList);
   }
 
   final EventBloc eventBloc;
+  final AuthBloc authBloc;
 
   Future<void> loadTaskList(
     LoadTaskList action,
@@ -28,7 +27,7 @@ class TaskListBloc extends Bloc<TaskListAction, TaskListState> {
 
     try {
       final random = Random();
-      if (random.nextBool()) {
+      if (random.nextDouble() > 0.75) {
         throw Exception('Failed to load tasks');
       }
 

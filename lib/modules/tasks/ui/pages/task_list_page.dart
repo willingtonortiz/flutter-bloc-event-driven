@@ -1,15 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart' show Modular;
 
-import 'package:blocevents/core/application/bloc/global/event_bloc.dart';
-import 'package:blocevents/core/domain/models/app_event.dart';
-
-import 'package:blocevents/modules/tasks/application/bloc/task_list_bloc.dart';
-import 'package:blocevents/modules/tasks/application/bloc/task_list_actions.dart';
-import 'package:blocevents/modules/tasks/application/bloc/task_list_events.dart';
-import 'package:blocevents/modules/tasks/application/bloc/task_list_state.dart';
+import 'package:blocevents/core/application/bloc/bloc.dart';
+import 'package:blocevents/core/domain/models/models.dart';
+import 'package:blocevents/modules/auth/application/bloc/bloc.dart';
+import 'package:blocevents/modules/tasks/application/bloc/bloc.dart';
 
 class TasksListPage extends StatelessWidget {
   const TasksListPage({Key? key}) : super(key: key);
@@ -24,12 +20,18 @@ class TasksListPage extends StatelessWidget {
         providers: [
           BlocProvider<TaskListBloc>(
             create: (_) => TaskListBloc(
-              eventBloc: context.read<EventBloc>(),
+              eventBloc: Modular.get<EventBloc>(),
+              authBloc: Modular.get<AuthBloc>(),
             ),
           ),
+          BlocProvider<AuthBloc>.value(value: Modular.get<AuthBloc>()),
         ],
         child: BlocListener<EventBloc, AppEvent>(
+          bloc: Modular.get<EventBloc>(),
           listener: (context, state) {
+            if (state is LoggedOut) {
+              Modular.to.navigate('/');
+            }
             if (state is TaskListRequested) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
@@ -81,9 +83,11 @@ class TaskListView extends StatelessWidget {
             },
           ),
           ElevatedButton(
-            onPressed: () {
-              context.read<TaskListBloc>().add(LoadTaskList());
-            },
+            onPressed: () => context.read<AuthBloc>().add(LogOut()),
+            child: const Text('Log out'),
+          ),
+          ElevatedButton(
+            onPressed: () => context.read<TaskListBloc>().add(LoadTaskList()),
             child: const Text('Load tasks'),
           ),
         ],

@@ -8,7 +8,7 @@ class EventBloc extends Cubit<AppEvent> {
   EventBloc() : super(UnsetEvent());
 
   void addEvent(AppEvent event) {
-    log(event.runtimeType.toString());
+    log('[Event] ${event.runtimeType.toString()}');
     emit(event);
   }
 }
